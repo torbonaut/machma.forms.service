@@ -188,7 +188,7 @@ final class Auth
         return hash_hmac('sha256', $value, $this->sessionKey);
     }
 
-    private static function algo(): string|int
+    private static function algo(): string
     {
         return defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
     }

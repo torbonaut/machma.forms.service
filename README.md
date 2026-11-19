@@ -102,11 +102,33 @@ oder ohne Mail einen Link direkt ausgeben lassen (geht auch auf dem Server für 
 docker compose exec app php bin/invite.php torben@machma.app
 ```
 
-Tests:
+## Tests
+
+Zwei Ebenen mit getrennten Aufgaben:
+
+| Ebene | Werkzeug | Prüft | Dauer |
+|---|---|---|---|
+| Unit & Integration | PHPUnit (`tests/Unit`, `tests/Integration`) | Validierung, Templates, Header-Injection, Redirect-Allowlist, Rate-Limits, ALTCHA-Replay, Config-Compiler, Login/Rollen/CSRF – im Prozess, mit fester Uhr und Fake-Mailer | ~2 s |
+| Statische Analyse | PHPStan (Level 6) | Typfehler, tote Pfade | ~5 s |
+| End-to-End | Playwright (`tests/e2e`) | Embed-Skript im echten Browser (beide Modi, cross-origin), Apache + `.htaccess` + PHP 8.2, echter SMTP-Versand über Mailpit, Dashboard-Abläufe | ~45 s |
 
 ```bash
 docker compose run --rm app vendor/bin/phpunit
+docker compose run --rm app vendor/bin/phpstan analyse
 ```
+
+**E2E lokal** – die Tests nutzen eine eigene, anonyme Config (`tests/e2e/config`) und eine Fixture-„Kundenseite“
+auf Port 4400 (erlaubte Origin) und 4401 (fremde Origin):
+
+```bash
+docker compose -f compose.yaml -f compose.e2e.yaml up -d --build
+docker compose exec app php bin/compile-config.php tests/e2e/config --schema=../forms-config/schema/form.schema.json
+cd tests/e2e && npm ci && npx playwright install chromium && npx playwright test
+```
+
+Jeder Lauf startet mit leerer SQLite-Datei und leerem Mailpit. Danach mit `docker compose exec app composer dev`
+wieder die normale Dev-Config kompilieren. `compose.e2e.yaml` startet zusätzlich einen Service mit absichtlich
+falschem Document-Root (:8081), um die Schutz-`.htaccess` im Repo-Root zu prüfen.
 
 **Ohne Docker:** `php -S localhost:8080 -t public public/index.php` plus Mailpit (dann ohne `.htaccess`-Test;
 in `secrets.php` SMTP-Host auf `localhost` setzen).
@@ -131,12 +153,12 @@ vom Link auf ein altes Formular oder einer Beschreibung zur geprüften Formular-
 
 ## Deploy
 
-GitHub Action `.github/workflows/deploy.yml` bei jedem Push auf `main`:
+GitHub Action `.github/workflows/deploy.yml` bei jedem Push und Pull Request:
 
-1. PHPUnit-Tests (mit dem Config-Repo ausgecheckt)
-2. Config prüfen und mit `--production` kompilieren
-3. `composer install --no-dev --optimize-autoloader`
-4. Code und `public/` per rsync über SSH hochladen, danach `config/compiled.php`
+1. **test:** PHPStan, PHPUnit (mit dem Config-Repo ausgecheckt), Produktions-Config prüfen
+2. **e2e:** Docker-Stack (Apache, PHP 8.2, Mailpit) starten und Playwright laufen lassen; bei Fehlern Report und Server-Logs als Artefakt
+3. **deploy** (nur `main`, nur wenn beide grün): Config mit `--production` kompilieren, `composer install --no-dev --optimize-autoloader`,
+   Code und `public/` per rsync über SSH hochladen, danach `config/compiled.php`; optional Smoke-Test gegen die Variable `PUBLIC_URL`
 
 Benötigte Secrets: `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `DEPLOY_PATH` (optional `SSH_PORT`, `SSH_KNOWN_HOSTS`,
 `CONFIG_REPO_TOKEN` – nötig, weil das Config-Repo privat ist: fine-grained Token mit Lesezugriff auf dessen Inhalt).

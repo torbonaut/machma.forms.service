@@ -1,0 +1,13 @@
+{
+  "name": "machma-forms-e2e",
+  "private": true,
+  "type": "module",
+  "description": "End-to-End-Tests für machma forms (Embed-Skript, Apache, SMTP, Dashboard)",
+  "scripts": {
+    "test": "playwright test",
+    "fixtures": "node fixtures/server.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

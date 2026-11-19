@@ -25,8 +25,12 @@ final class ConfigCompiler
     /** @var list<string> */
     private array $errors = [];
 
-    public function __construct(private readonly string $dir)
+    private readonly string $schemaFile;
+
+    /** @param string|null $schemaFile meta schema; defaults to <dir>/schema/form.schema.json */
+    public function __construct(private readonly string $dir, ?string $schemaFile = null)
     {
+        $this->schemaFile = $schemaFile ?? $dir . '/schema/form.schema.json';
     }
 
     /**
@@ -36,11 +40,10 @@ final class ConfigCompiler
     public function compile(bool $production = false): array
     {
         $this->errors = [];
-        $schemaFile = $this->dir . '/schema/form.schema.json';
-        if (!is_file($schemaFile)) {
-            throw new ConfigException(["schema/form.schema.json fehlt in {$this->dir}"]);
+        if (!is_file($this->schemaFile)) {
+            throw new ConfigException(["Meta-Schema fehlt: {$this->schemaFile}"]);
         }
-        $schema = json_decode((string) file_get_contents($schemaFile));
+        $schema = json_decode((string) file_get_contents($this->schemaFile));
         if (!is_object($schema)) {
             throw new ConfigException(['schema/form.schema.json ist kein gültiges JSON']);
         }
@@ -61,7 +64,8 @@ final class ConfigCompiler
 
         $users = $this->compileUsers($sites);
 
-        if ($this->errors !== []) {
+        // The helpers above append to $this->errors; PHPStan cannot see that.
+        if ($this->errors !== []) { // @phpstan-ignore notIdentical.alwaysFalse
             throw new ConfigException($this->errors);
         }
 
@@ -72,7 +76,7 @@ final class ConfigCompiler
     public function checkForm(string $file, ?array $site = null): array
     {
         $this->errors = [];
-        $schema = json_decode((string) file_get_contents($this->dir . '/schema/form.schema.json'));
+        $schema = json_decode((string) file_get_contents($this->schemaFile));
         $this->compileForm($file, $site, $schema);
         return $this->errors;
     }

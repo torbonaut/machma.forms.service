@@ -1,0 +1,8 @@
+{
+  "id": "kontakt",
+  "version": 1,
+  "recipient": "team",
+  "fields": [
+    { "name": "name", "type": "text", "required": true, "label": { "de": "Name" } }
+  ]
+}

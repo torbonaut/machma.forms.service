@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>Modus 2</title></head>
+<body>
+<h1>Kundenseite – eigenes HTML</h1>
+<!-- bewusst ohne required, damit die Server-Validierung greift -->
+<form id="evil" data-machma-form="e2e/anfrage" data-redirect-url="https://evil.example/phish">
+  <p><label>Name <input name="name"></label></p>
+  <p><label>E-Mail <input name="email"></label></p>
+  <p><label>Nachricht <textarea name="nachricht"></textarea></label></p>
+  <p><label><input type="checkbox" name="datenschutz"> Datenschutz</label></p>
+  <button type="submit">Absenden</button>
+</form>
+<script src="http://localhost:8080/v1/embed.js?v=1" defer></script>
+</body></html>

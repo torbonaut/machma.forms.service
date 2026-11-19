@@ -9,6 +9,7 @@ declare(strict_types=1);
  *   php bin/compile-config.php <config-dir> [--production] [--out=config/compiled.php]
  *   php bin/compile-config.php <config-dir> --check            # validate only, write nothing
  *   php bin/compile-config.php <config-dir> --check-form=forms/<site>/<form>.json
+ *   php bin/compile-config.php <config-dir> --schema=<meta-schema.json>   # e.g. for tests/e2e/config
  *
  * Exits with 1 and lists every problem if anything is wrong – then nothing is deployed.
  */
@@ -35,7 +36,7 @@ if ($dir === null || !is_dir($dir)) {
     exit(2);
 }
 $dir = rtrim((string) realpath($dir), '/');
-$compiler = new ConfigCompiler($dir);
+$compiler = new ConfigCompiler($dir, is_string($opts['schema'] ?? null) ? (string) realpath((string) $opts['schema']) : null);
 
 if (isset($opts['check-form'])) {
     $file = str_starts_with((string) $opts['check-form'], '/') ? (string) $opts['check-form'] : $dir . '/' . $opts['check-form'];

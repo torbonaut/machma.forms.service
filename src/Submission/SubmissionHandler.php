@@ -101,7 +101,7 @@ final class SubmissionHandler
 
         // 5. Honeypot empty and minimum time reached → otherwise silently "ok"
         $honeypot = $input[self::HONEYPOT] ?? '';
-        if ($honeypot !== '' && $honeypot !== null) {
+        if ($honeypot !== '') {
             $logFn('spam', 'honeypot');
             return self::success($redirect);
         }

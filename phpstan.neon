@@ -1,0 +1,11 @@
+parameters:
+    level: 6
+    paths:
+        - src
+        - bin
+        - public/index.php
+    tmpDir: var/phpstan
+    ignoreErrors:
+        # Config/form data are plain arrays from compiled.php; their shape is enforced by the
+        # meta schema and ConfigCompiler, not by docblocks.
+        - identifier: missingType.iterableValue

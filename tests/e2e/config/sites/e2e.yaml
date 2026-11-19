@@ -1,0 +1,14 @@
+# E2E: Kundenseite auf :4400 (Fixture-Server), Service auf :8080. :4401 ist bewusst NICHT erlaubt.
+id: e2e
+origins:
+  - http://localhost:4400
+  - http://localhost:8080
+fromName: E2E Hotel via machma forms
+recipients:
+  team:
+    to: [team@e2e.test]
+    cc: [cc@e2e.test]
+    bcc: [bcc@e2e.test]
+rateLimit: { perIp: 100, windowMinutes: 10 }
+locales: [de, en]
+dryRun: false

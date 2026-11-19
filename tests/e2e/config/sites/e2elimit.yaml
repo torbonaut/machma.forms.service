@@ -1,0 +1,11 @@
+# E2E: kleines Rate-Limit für den 429-Test
+id: e2elimit
+origins:
+  - http://localhost:4400
+fromName: E2E Limit
+recipients:
+  team:
+    to: [limit@e2e.test]
+rateLimit: { perIp: 2, windowMinutes: 10 }
+locales: [de]
+dryRun: false

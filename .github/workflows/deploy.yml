@@ -1,9 +1,10 @@
-# Service-Repo: Tests → Build → Upload per rsync → Config neu bauen.
-# Schlägt ein Schritt fehl, wird nichts deployt. secrets.php und var/ werden nie überschrieben.
+# Service-Repo: Tests (PHPStan, PHPUnit) + E2E (Playwright gegen Apache/PHP 8.2/Mailpit) → Deploy.
+# Deployt wird nur von main und nur, wenn beide Test-Jobs grün sind.
+# secrets.php und var/ werden nie überschrieben.
 #
-# Benötigte Secrets: SSH_HOST, SSH_USER, SSH_KEY, DEPLOY_PATH
-# Optional:          SSH_PORT (Standard 22), SSH_KNOWN_HOSTS (empfohlen, sonst ssh-keyscan),
-#                    CONFIG_REPO_TOKEN (falls das Config-Repo privat ist)
+# Benötigte Secrets: CONFIG_REPO_TOKEN (Config-Repo ist privat: fine-grained, Contents read-only),
+#                    SSH_HOST, SSH_USER, SSH_KEY, DEPLOY_PATH
+# Optional:          SSH_PORT (Standard 22), SSH_KNOWN_HOSTS (empfohlen, sonst ssh-keyscan)
 # Variable:          CONFIG_REPO (Standard: <owner>/machma.forms.config)
 name: Test & Deploy
 
@@ -14,46 +15,121 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-forms
-  cancel-in-progress: false
+  group: forms-service-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  CONFIG_REPO: ${{ vars.CONFIG_REPO || format('{0}/machma.forms.config', github.repository_owner) }}
 
 jobs:
-  test-and-deploy:
+  test:
+    name: PHPStan & PHPUnit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Config-Repo auschecken
         uses: actions/checkout@v4
         with:
-          repository: ${{ vars.CONFIG_REPO || format('{0}/machma.forms.config', github.repository_owner) }}
+          repository: ${{ env.CONFIG_REPO }}
           token: ${{ secrets.CONFIG_REPO_TOKEN || github.token }}
           path: forms-config
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           extensions: pdo_sqlite, mbstring
           coverage: none
-
-      - name: Abhängigkeiten (inkl. Dev)
-        run: composer install --no-interaction --no-progress
-
+      - run: composer install --no-interaction --no-progress
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --no-progress
       - name: PHPUnit
         run: vendor/bin/phpunit
         env:
           FORMS_CONFIG_DIR: forms-config
+      - name: Produktions-Config prüfen
+        run: php bin/compile-config.php forms-config --production --check
 
-      - name: Config prüfen und kompilieren
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Config-Repo auschecken (nur für das Meta-Schema)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CONFIG_REPO }}
+          token: ${{ secrets.CONFIG_REPO_TOKEN || github.token }}
+          path: forms-config
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_sqlite, mbstring
+          coverage: none
+      - run: composer install --no-interaction --no-progress
+      - name: E2E-Config und Secrets vorbereiten
         run: |
+          cp secrets.example.php secrets.php
+          php bin/compile-config.php tests/e2e/config --schema=forms-config/schema/form.schema.json
+          chmod -R a+rwX var config
+      - name: Docker-Stack starten (Apache + PHP 8.2, Mailpit)
+        run: |
+          docker compose -f compose.yaml -f compose.e2e.yaml up -d --build
+          for i in $(seq 1 60); do curl -fs http://localhost:8080/health && break; sleep 1; done
+          curl -fs http://localhost:8080/health
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tests/e2e/package-lock.json
+      - name: Playwright installieren
+        working-directory: tests/e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Playwright
+        working-directory: tests/e2e
+        run: npx playwright test
+      - name: Report bei Fehler hochladen
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            tests/e2e/playwright-report
+            tests/e2e/test-results
+          retention-days: 7
+      - name: Server-Logs bei Fehler
+        if: failure()
+        run: docker compose -f compose.yaml -f compose.e2e.yaml logs --no-color app
+
+  deploy:
+    name: Deploy
+    needs: [test, e2e]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-forms
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Config-Repo auschecken
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CONFIG_REPO }}
+          token: ${{ secrets.CONFIG_REPO_TOKEN || github.token }}
+          path: forms-config
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_sqlite, mbstring
+          coverage: none
+      - name: Config kompilieren (YAML-Parser nur hier)
+        run: |
+          composer install --no-interaction --no-progress
           mkdir -p build
           php bin/compile-config.php forms-config --production --out=build/compiled.php
-
       - name: Produktions-Abhängigkeiten
         run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
-
       - name: SSH vorbereiten
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           install -m 700 -d ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
@@ -62,19 +138,21 @@ jobs:
           else
             ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" "${{ secrets.SSH_HOST }}" > ~/.ssh/known_hosts
           fi
-
       - name: Code und public/ hochladen
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           rsync -az --delete \
             --exclude '/.git' --exclude '/.github' --exclude '/tests' --exclude '/build' --exclude '/forms-config' \
-            --exclude '/secrets.php' --exclude '/var/' --exclude '/config/compiled.php' \
-            --exclude '/.phpunit.cache' --exclude '/compose.yaml' --exclude '/Dockerfile' \
+            --exclude '/docs' --exclude '/secrets.php' --exclude '/var/' --exclude '/config/compiled.php' \
+            --exclude '/.phpunit.cache' --exclude '/phpunit.xml' --exclude '/phpstan.neon' \
+            --exclude '/compose.yaml' --exclude '/compose.e2e.yaml' --exclude '/Dockerfile' \
             -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }}" \
             ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
-
       - name: Config hochladen
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           rsync -az -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }}" \
             build/compiled.php "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/config/compiled.php"
+      - name: Smoke-Test nach dem Deploy
+        if: vars.PUBLIC_URL != ''
+        run: |
+          curl -fsS "${{ vars.PUBLIC_URL }}/health"
+          curl -fsS -o /dev/null "${{ vars.PUBLIC_URL }}/v1/embed.js?v=1"

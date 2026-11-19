@@ -1,0 +1,11 @@
+# Wie die Live-Beispiele der Website: dryRun, nichts wird verschickt
+id: demo
+origins:
+  - http://localhost:8080
+fromName: machma forms Demo
+recipients:
+  demo:
+    to: [demo@e2e.test]
+rateLimit: { perIp: 100, windowMinutes: 10 }
+locales: [de, en]
+dryRun: true

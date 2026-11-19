@@ -1,0 +1,5 @@
+- email: admin@e2e.test
+  role: admin
+- email: client@e2e.test
+  role: client
+  sites: [e2e]

@@ -1,0 +1,11 @@
+# Zusatz für die E2E-Tests:  docker compose -f compose.yaml -f compose.e2e.yaml up -d --build
+# app-misrooted simuliert einen falsch gesetzten Document-Root (Repo-Root statt public/),
+# um die Schutz-.htaccess im Root zu prüfen.
+services:
+  app-misrooted:
+    build: .
+    volumes:
+      - ".:/var/www/html"
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html
+    ports: ["8081:80"]

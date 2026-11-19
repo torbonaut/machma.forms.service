@@ -1,0 +1,39 @@
+{
+  "id": "kontakt",
+  "version": 3,
+  "recipient": "team",
+  "submitLabel": { "de": "Anfrage senden", "en": "Send request" },
+  "successMessage": { "de": "Danke, wir melden uns!", "en": "Thanks, we will get back to you!" },
+  "fields": [
+    { "name": "name", "type": "text", "required": true, "maxLength": 100, "label": { "de": "Name", "en": "Name" } },
+    { "name": "email", "type": "email", "required": true, "replyTo": true, "label": { "de": "E-Mail", "en": "Email" } },
+    { "name": "telefon", "type": "tel", "label": { "de": "Telefon", "en": "Phone" } },
+    { "name": "anreise", "type": "date", "label": { "de": "Anreise", "en": "Arrival" } },
+    { "name": "personen", "type": "number", "min": 1, "max": 12, "default": 2, "label": { "de": "Personen", "en": "Guests" } },
+    { "name": "thema", "type": "select", "required": true, "label": { "de": "Thema", "en": "Topic" },
+      "options": [
+        { "value": "zimmer", "label": { "de": "Zimmeranfrage", "en": "Room request" } },
+        { "value": "sonstiges", "label": { "de": "Sonstiges", "en": "Other" } } ] },
+    { "name": "zimmer", "type": "radio", "label": { "de": "Zimmer", "en": "Room" },
+      "options": [
+        { "value": "doppel", "label": { "de": "Doppelzimmer", "en": "Double room" } },
+        { "value": "suite", "label": { "de": "Suite", "en": "Suite" } } ] },
+    { "name": "extras", "type": "checkbox", "label": { "de": "Extras", "en": "Extras" },
+      "options": [
+        { "value": "parkplatz", "label": { "de": "Parkplatz", "en": "Parking" } },
+        { "value": "hund", "label": { "de": "Mit Hund", "en": "With dog" } } ] },
+    { "name": "newsletter", "type": "checkbox", "label": { "de": "Newsletter", "en": "Newsletter" } },
+    { "name": "quelle", "type": "hidden", "default": "e2e" },
+    { "name": "nachricht", "type": "textarea", "required": true, "maxLength": 2000, "label": { "de": "Nachricht", "en": "Message" } },
+    { "name": "datenschutz", "type": "consent", "required": true, "label": { "de": "Ich akzeptiere die Datenschutzerklärung", "en": "I accept the privacy policy" } }
+  ],
+  "mail": {
+    "subject": { "de": "Anfrage {{thema}} von {{name}}" },
+    "body": { "de": "Name: {{name}}\nTelefon: {{telefon}}\nAnreise: {{anreise}}\nPersonen: {{personen}}\nZimmer: {{zimmer}}\nExtras: {{extras}}\nNewsletter: {{newsletter}}\nQuelle: {{quelle}}\n\n{{nachricht}}" }
+  },
+  "autoresponder": {
+    "enabled": true,
+    "subject": { "de": "Danke für Ihre Anfrage", "en": "Thank you for your request" },
+    "body": { "de": "Fester Danke-Text.", "en": "Fixed thank-you text." }
+  }
+}
