@@ -1,0 +1,80 @@
+# Service-Repo: Tests → Build → Upload per rsync → Config neu bauen.
+# Schlägt ein Schritt fehl, wird nichts deployt. secrets.php und var/ werden nie überschrieben.
+#
+# Benötigte Secrets: SSH_HOST, SSH_USER, SSH_KEY, DEPLOY_PATH
+# Optional:          SSH_PORT (Standard 22), SSH_KNOWN_HOSTS (empfohlen, sonst ssh-keyscan),
+#                    CONFIG_REPO_TOKEN (falls das Config-Repo privat ist)
+# Variable:          CONFIG_REPO (Standard: <owner>/machma.forms.config)
+name: Test & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-forms
+  cancel-in-progress: false
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Config-Repo auschecken
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.CONFIG_REPO || format('{0}/machma.forms.config', github.repository_owner) }}
+          token: ${{ secrets.CONFIG_REPO_TOKEN || github.token }}
+          path: forms-config
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_sqlite, mbstring
+          coverage: none
+
+      - name: Abhängigkeiten (inkl. Dev)
+        run: composer install --no-interaction --no-progress
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit
+        env:
+          FORMS_CONFIG_DIR: forms-config
+
+      - name: Config prüfen und kompilieren
+        run: |
+          mkdir -p build
+          php bin/compile-config.php forms-config --production --out=build/compiled.php
+
+      - name: Produktions-Abhängigkeiten
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+      - name: SSH vorbereiten
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          if [ -n "${{ secrets.SSH_KNOWN_HOSTS }}" ]; then
+            echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" "${{ secrets.SSH_HOST }}" > ~/.ssh/known_hosts
+          fi
+
+      - name: Code und public/ hochladen
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          rsync -az --delete \
+            --exclude '/.git' --exclude '/.github' --exclude '/tests' --exclude '/build' --exclude '/forms-config' \
+            --exclude '/secrets.php' --exclude '/var/' --exclude '/config/compiled.php' \
+            --exclude '/.phpunit.cache' --exclude '/compose.yaml' --exclude '/Dockerfile' \
+            -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }}" \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+      - name: Config hochladen
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          rsync -az -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }}" \
+            build/compiled.php "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/config/compiled.php"

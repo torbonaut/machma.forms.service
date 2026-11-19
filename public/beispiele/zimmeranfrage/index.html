@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Zimmeranfrage – Beispiele – machma forms</title>
+<meta name="description" content="Live-Beispiel Zimmeranfrage für machma forms mit JSON und Einbindungs-Snippet.">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/v1/embed.js?v=1" defer data-styles="off"></script><script src="/assets/site.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/" aria-current="page">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+
+<main class="wrap page">
+<p><a href="/beispiele/">← Alle Beispiele</a></p>
+<h1>Zimmeranfrage</h1>
+<p class="lead">Anreise/Abreise, Personen, Radio-Buttons, Mehrfachauswahl, Danke-Mail.</p>
+<div class="example">
+  <div>
+    <div class="demo-box">
+      <div class="mf-slot" data-machma-form="demo/zimmeranfrage" data-locale="de"></div>
+      <noscript>Bitte JavaScript aktivieren.</noscript>
+    </div>
+    <div class="preview" id="preview" hidden>
+      <h2>Das wäre gesendet worden</h2>
+      <h3>Mail an den Empfänger</h3>
+      <pre id="preview-mail"></pre>
+      <h3>Danke-Mail an den Absender</h3>
+      <pre id="preview-auto"></pre>
+      <p><button class="btn" id="again" type="button">Nochmal ausprobieren</button></p>
+    </div>
+  </div>
+  <div>
+    <h2>Einbindung</h2>
+    <pre><code>&lt;div class=&quot;mf-slot&quot; data-machma-form=&quot;demo/zimmeranfrage&quot; data-locale=&quot;de&quot;&gt;&lt;/div&gt;
+&lt;noscript&gt;Bitte JavaScript aktivieren.&lt;/noscript&gt;
+&lt;script src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;</code></pre>
+    <h2>Formular-JSON</h2>
+    <p><code>forms/demo/zimmeranfrage.json</code> im Config-Repo:</p>
+    <pre><code>{
+  &quot;$schema&quot;: &quot;../../schema/form.schema.json&quot;,
+  &quot;id&quot;: &quot;zimmeranfrage&quot;,
+  &quot;version&quot;: 1,
+  &quot;recipient&quot;: &quot;demo&quot;,
+  &quot;submitLabel&quot;: {
+    &quot;de&quot;: &quot;Unverbindlich anfragen&quot;,
+    &quot;en&quot;: &quot;Send request&quot;
+  },
+  &quot;fields&quot;: [
+    {
+      &quot;name&quot;: &quot;name&quot;,
+      &quot;type&quot;: &quot;text&quot;,
+      &quot;required&quot;: true,
+      &quot;maxLength&quot;: 100,
+      &quot;autocomplete&quot;: &quot;name&quot;,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Name&quot;,
+        &quot;en&quot;: &quot;Name&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;email&quot;,
+      &quot;type&quot;: &quot;email&quot;,
+      &quot;required&quot;: true,
+      &quot;replyTo&quot;: true,
+      &quot;autocomplete&quot;: &quot;email&quot;,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;E-Mail&quot;,
+        &quot;en&quot;: &quot;Email&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;telefon&quot;,
+      &quot;type&quot;: &quot;tel&quot;,
+      &quot;maxLength&quot;: 40,
+      &quot;autocomplete&quot;: &quot;tel&quot;,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Telefon&quot;,
+        &quot;en&quot;: &quot;Phone&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;anreise&quot;,
+      &quot;type&quot;: &quot;date&quot;,
+      &quot;required&quot;: true,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Anreise&quot;,
+        &quot;en&quot;: &quot;Arrival&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;abreise&quot;,
+      &quot;type&quot;: &quot;date&quot;,
+      &quot;required&quot;: true,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Abreise&quot;,
+        &quot;en&quot;: &quot;Departure&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;erwachsene&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;required&quot;: true,
+      &quot;min&quot;: 1,
+      &quot;max&quot;: 12,
+      &quot;default&quot;: 2,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Erwachsene&quot;,
+        &quot;en&quot;: &quot;Adults&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;kinder&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;min&quot;: 0,
+      &quot;max&quot;: 10,
+      &quot;default&quot;: 0,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Kinder&quot;,
+        &quot;en&quot;: &quot;Children&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;zimmer&quot;,
+      &quot;type&quot;: &quot;radio&quot;,
+      &quot;required&quot;: true,
+      &quot;options&quot;: [
+        {
+          &quot;value&quot;: &quot;doppel&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Doppelzimmer&quot;,
+            &quot;en&quot;: &quot;Double room&quot;
+          }
+        },
+        {
+          &quot;value&quot;: &quot;suite&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Suite&quot;,
+            &quot;en&quot;: &quot;Suite&quot;
+          }
+        },
+        {
+          &quot;value&quot;: &quot;familie&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Familienzimmer&quot;,
+            &quot;en&quot;: &quot;Family room&quot;
+          }
+        }
+      ],
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Zimmer&quot;,
+        &quot;en&quot;: &quot;Room&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;extras&quot;,
+      &quot;type&quot;: &quot;checkbox&quot;,
+      &quot;options&quot;: [
+        {
+          &quot;value&quot;: &quot;halbpension&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Halbpension&quot;,
+            &quot;en&quot;: &quot;Half board&quot;
+          }
+        },
+        {
+          &quot;value&quot;: &quot;parkplatz&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Parkplatz&quot;,
+            &quot;en&quot;: &quot;Parking&quot;
+          }
+        },
+        {
+          &quot;value&quot;: &quot;hund&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Mit Hund&quot;,
+            &quot;en&quot;: &quot;With dog&quot;
+          }
+        }
+      ],
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Extras&quot;,
+        &quot;en&quot;: &quot;Extras&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;nachricht&quot;,
+      &quot;type&quot;: &quot;textarea&quot;,
+      &quot;maxLength&quot;: 5000,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Wünsche&quot;,
+        &quot;en&quot;: &quot;Requests&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;datenschutz&quot;,
+      &quot;type&quot;: &quot;consent&quot;,
+      &quot;required&quot;: true,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Ich akzeptiere die Datenschutzerklärung&quot;,
+        &quot;en&quot;: &quot;I accept the privacy policy&quot;
+      }
+    }
+  ],
+  &quot;mail&quot;: {
+    &quot;subject&quot;: {
+      &quot;de&quot;: &quot;Zimmeranfrage {{anreise}}–{{abreise}} von {{name}}&quot;
+    }
+  },
+  &quot;autoresponder&quot;: {
+    &quot;enabled&quot;: true,
+    &quot;subject&quot;: {
+      &quot;de&quot;: &quot;Ihre Zimmeranfrage&quot;,
+      &quot;en&quot;: &quot;Your room request&quot;
+    },
+    &quot;body&quot;: {
+      &quot;de&quot;: &quot;Vielen Dank für Ihre Anfrage.\nWir senden Ihnen innerhalb von 24 Stunden ein Angebot.&quot;,
+      &quot;en&quot;: &quot;Thank you for your request.\nWe will send you an offer within 24 hours.&quot;
+    }
+  }
+}</code></pre>
+  </div>
+</div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

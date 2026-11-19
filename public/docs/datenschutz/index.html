@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Datenschutz – machma forms</title>
+<meta name="description" content="Was machma forms speichert, Textbausteine für Datenschutzerklärung und AV-Vertrag.">
+<link rel="stylesheet" href="/assets/site.css">
+
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+<div class="wrap docs">
+<nav class="docs-nav" aria-label="Dokumentation"><h4>Erste Schritte</h4><ul><li><a href="/docs/schnellstart/">Schnellstart</a></li></ul><h4>Referenz</h4><ul><li><a href="/docs/formular-json/">Formular-JSON</a></li><li><a href="/docs/einbindung/">Einbindung</a></li><li><a href="/docs/mailversand/">Mailversand</a></li><li><a href="/docs/redirects-fehler/">Redirects & Fehler</a></li></ul><h4>Recht</h4><ul><li><a href="/docs/datenschutz/" aria-current="page">Datenschutz</a></li></ul></nav>
+<article>
+
+<h1>Datenschutz</h1>
+<p class="lead">Was gespeichert wird, was nicht – und Textbausteine für deine Datenschutzerklärung.</p>
+
+<h2>Grundsätze</h2>
+<ul>
+<li>Inhalte von Einsendungen werden <b>nur zugestellt, nie gespeichert</b>, und gehen ausschließlich an Adressen des Kunden.</li>
+<li>Keine Cookies, keine Drittanbieter, kein Tracking. Der Spamschutz (ALTCHA) rechnet lokal im Browser.</li>
+<li>Gehostet bei netcup (Hosting) – keine US-Cloud.</li>
+</ul>
+
+<h2>Was gespeichert wird</h2>
+<div class="table"><table>
+<thead><tr><th>Daten</th><th>Zweck</th><th>Dauer</th></tr></thead>
+<tbody>
+<tr><td>Log pro Einsendung: Zeitpunkt, Seite, Formular, Status, Grund, Sprache, Dauer, ob eine Danke-Mail ging</td><td>Betrieb, Statistik, Fehlersuche</td><td>90 Tage</td></tr>
+<tr><td>IP-Hash (HMAC mit täglich wechselndem Salt, nicht rückrechenbar)</td><td>Rate-Limit, Missbrauchsschutz</td><td>Log: 90 Tage; Rate-Limit: max. 2 Tage</td></tr>
+<tr><td>Hash der Absenderadresse</td><td>Limit von 3 Danke-Mails pro Adresse und Tag</td><td>24 Stunden</td></tr>
+<tr><td>Benutzte Spamschutz-Lösungen</td><td>Schutz gegen Wiederverwendung</td><td>bis Ablauf, max. 10 Minuten</td></tr>
+</tbody></table></div>
+<p><b>Nicht gespeichert:</b> Feldinhalte, E-Mail-Adressen, volle IP-Adressen, User-Agent.</p>
+
+<h2>Textbaustein für die Datenschutzerklärung</h2>
+<div class="note">
+<p><b>Kontaktformular</b></p>
+<p>Wenn Sie uns über das Kontaktformular eine Nachricht senden, verarbeiten wir die von Ihnen eingegebenen Daten
+(z. B. Name, E-Mail-Adresse, Nachricht), um Ihre Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO bzw. lit. f DSGVO).
+Für den Versand nutzen wir den Dienst machma forms von machma.app als Auftragsverarbeiter. machma forms leitet Ihre Eingaben
+per E-Mail an uns weiter und speichert die Inhalte nicht. Zum Schutz vor Missbrauch werden technische Metadaten
+(Zeitpunkt, Status, ein nicht rückrechenbarer Hash Ihrer IP-Adresse) für höchstens 90 Tage gespeichert. Es werden keine Cookies
+gesetzt und keine Dienste Dritter geladen. Unterauftragsverarbeiter sind netcup GmbH (Hosting) und der E-Mail-Anbieter
+von machma.app. Ihre Nachricht bewahren wir auf, solange es zur Bearbeitung Ihrer Anfrage erforderlich ist.</p>
+</div>
+<p class="note">Dieser Baustein ist ein Vorschlag und ersetzt keine Rechtsberatung. Bitte an deine Datenschutzerklärung anpassen.</p>
+
+<h2>Auftragsverarbeitung</h2>
+<p>machma.app verarbeitet die Formulardaten im Auftrag des Websitebetreibers. Einen Vertrag zur Auftragsverarbeitung (AV-Vertrag nach Art. 28 DSGVO)
+stellen wir auf Anfrage bereit – schreib uns über <a href="/#zugang">Zugang anfragen</a>.</p>
+
+</article>
+</div>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

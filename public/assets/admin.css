@@ -1,0 +1,61 @@
+:root {
+  --bg: #f6f6f3; --card: #fff; --text: #1d1d1b; --muted: #6b6b66; --line: #e3e2dc;
+  --accent: #1f5f4a; --accent-ink: #fff;
+  --sent: #2f7d5b; --spam: #c9a227; --invalid: #8a8a84; --rate: #6a5acd; --error: #c0392b;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #151614; --card: #1e201d; --text: #ecebe6; --muted: #a1a09a; --line: #34362f; --accent: #5fbf98; --accent-ink: #0d1a14; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.5; }
+a { color: var(--accent); }
+.top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--card); }
+.brand { text-decoration: none; color: var(--text); font-size: 18px; }
+.top nav { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 8px; }
+h2 { font-size: 18px; margin: 0 0 12px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.narrow { max-width: 420px; margin: 48px auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.grid .card { margin: 0; }
+.stack { display: grid; gap: 14px; }
+label { display: grid; gap: 4px; font-size: 14px; }
+input, select { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
+button { font: inherit; padding: 9px 16px; border: 0; border-radius: 6px; background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+button.small { padding: 5px 10px; font-size: 13px; }
+button.link { background: none; color: var(--accent); padding: 0; }
+form.inline { display: inline; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.flash { padding: 10px 14px; border-radius: 6px; }
+.flash-ok { background: color-mix(in srgb, var(--sent) 15%, transparent); }
+.flash-error { background: color-mix(in srgb, var(--error) 15%, transparent); }
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 99px; background: color-mix(in srgb, var(--spam) 25%, transparent); vertical-align: middle; }
+.kpis { display: flex; flex-wrap: wrap; gap: 16px; }
+.kpis b { font-size: 20px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-weight: 600; color: var(--muted); font-size: 13px; }
+.scroll { overflow-x: auto; }
+.row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; }
+.tabs a { margin-left: 12px; text-decoration: none; }
+.tabs a.on { font-weight: 700; text-decoration: underline; }
+.filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 12px; }
+.pager { display: flex; gap: 16px; justify-content: center; }
+.chart { width: 100%; height: 200px; display: block; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .axis { fill: var(--muted); font-size: 11px; }
+.chart .hit { fill: transparent; }
+.chart .hit:hover { fill: color-mix(in srgb, var(--text) 6%, transparent); }
+.s-sent { fill: var(--sent); --c: var(--sent); }
+.s-spam { fill: var(--spam); --c: var(--spam); }
+.s-invalid { fill: var(--invalid); --c: var(--invalid); }
+.s-rate_limited { fill: var(--rate); --c: var(--rate); }
+.s-error { fill: var(--error); --c: var(--error); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; background: var(--c); }
+.status { padding: 1px 8px; border-radius: 99px; font-size: 12px; background: color-mix(in srgb, var(--c) 18%, transparent); }
+code { font-size: 12px; }

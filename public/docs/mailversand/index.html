@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Mailversand – machma forms</title>
+<meta name="description" content="Zentraler Absender, Reply-To, Spam-Ordner vermeiden, Empfänger-Whitelist.">
+<link rel="stylesheet" href="/assets/site.css">
+
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+<div class="wrap docs">
+<nav class="docs-nav" aria-label="Dokumentation"><h4>Erste Schritte</h4><ul><li><a href="/docs/schnellstart/">Schnellstart</a></li></ul><h4>Referenz</h4><ul><li><a href="/docs/formular-json/">Formular-JSON</a></li><li><a href="/docs/einbindung/">Einbindung</a></li><li><a href="/docs/mailversand/" aria-current="page">Mailversand</a></li><li><a href="/docs/redirects-fehler/">Redirects & Fehler</a></li></ul><h4>Recht</h4><ul><li><a href="/docs/datenschutz/">Datenschutz</a></li></ul></nav>
+<article>
+
+<h1>Mailversand</h1>
+<p class="lead">Wie Mails ankommen – und was Empfänger tun können, damit sie nicht im Spam landen.</p>
+
+<h2>Absender</h2>
+<p>Alle Mails kommen von <code>formulare@machma.app</code>, mit dem Anzeigenamen der Kundenseite, z. B.
+„Hotel Seeblick via machma forms“. <b>Reply-To</b> ist die Adresse aus dem Formular – ein Klick auf „Antworten“ geht also direkt
+an die Person, die das Formular abgeschickt hat. Kunden müssen nichts einrichten: kein SMTP-Zugang, keine DNS-Einträge.</p>
+<p>Die Danke-Mail (Autoresponder) geht an die Absenderadresse aus dem Formular; ihre Antwortadresse ist die Adresse des Kunden.
+Pro Empfängeradresse gehen höchstens drei Danke-Mails am Tag hinaus.</p>
+<p>Für <code>formulare@machma.app</code> sind SPF, DKIM und DMARC eingerichtet, damit die Mails als echt erkannt werden.</p>
+
+<h2>Zustellung sicherstellen</h2>
+<p>Nimm <code>formulare@machma.app</code> in dein Adressbuch bzw. die Liste sicherer Absender auf:</p>
+<h3>Outlook</h3>
+<ul>
+<li><b>Outlook im Web / neues Outlook:</b> Einstellungen → E-Mail → Junk-E-Mail → „Sichere Absender und Domänen“ → Hinzufügen → <code>formulare@machma.app</code> → Speichern.</li>
+<li><b>Outlook für Windows (klassisch):</b> Start → Junk-E-Mail → Junk-E-Mail-Optionen → Sichere Absender → Hinzufügen.</li>
+</ul>
+<h3>Gmail</h3>
+<ul>
+<li>Zahnrad → Alle Einstellungen aufrufen → Filter und blockierte Adressen → Neuen Filter erstellen.</li>
+<li>Bei „Von“ <code>formulare@machma.app</code> eintragen → Filter erstellen → „Nie als Spam einstufen“ anhaken → Filter erstellen.</li>
+</ul>
+<h3>Apple Mail</h3>
+<ul>
+<li>Eine Mail von machma forms öffnen, auf den Absender klicken → „Zu Kontakten hinzufügen“.</li>
+<li>Unter iCloud-Mail zusätzlich: Mail → Einstellungen → Regeln, falls eine Regel Mails verschiebt.</li>
+</ul>
+<p>Bei eigenen Mailservern oder Spamfiltern (z. B. in Firmen) bitte die IT, <code>formulare@machma.app</code> freizugeben.</p>
+
+<h2>Testen</h2>
+<ol>
+<li>Schick das Formular auf deiner Seite einmal selbst ab, mit deiner eigenen Adresse im E-Mail-Feld.</li>
+<li>Im Dashboard sollte die Einsendung als „versendet“ erscheinen. Als Admin gibt es dort zusätzlich die Testeinsendung und einen SMTP-Test.</li>
+<li>Landet die Mail im Spam: als „Kein Spam“ markieren und den Absender wie oben freigeben.</li>
+<li>Kommt gar nichts an: Spam- und Quarantäne-Ordner prüfen (auch im Admin-Bereich des Mailanbieters), Tippfehler in der Empfängeradresse ausschließen, uns kontaktieren.
+Im Dashboard steht bei Fehlern der Grund, z. B. <code>smtp_connect</code>.</li>
+</ol>
+
+<h2>Warum keine eigene Absenderdomain?</h2>
+<p>Ein Postfach, eine DNS-Konfiguration, kein SMTP-Zugang von Kunden. Das hält die Zustellbarkeit hoch und das Setup einfach.</p>
+
+</article>
+</div>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

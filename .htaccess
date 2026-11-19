@@ -1,0 +1,9 @@
+# Fallback, falls der Document-Root einmal nicht auf public/ steht:
+# alles sperren außer public/.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(?!public/) - [F,L]
+</IfModule>
+<FilesMatch "^(secrets\.php|composer\.(json|lock)|.*\.sqlite)$">
+  Require all denied
+</FilesMatch>

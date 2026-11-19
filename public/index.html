@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>machma forms – Formular-Backend für statische Websites</title>
+<meta name="description" content="Formular-Backend für statische Websites. Selbst gehostet, DSGVO-freundlich, ohne Drittanbieter.">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/v1/embed.js?v=1" defer data-styles="off"></script>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <h1>Formulare für jede Website. Ohne Drittanbieter.</h1>
+  <p class="lead">machma forms nimmt Formulare von beliebigen Websites entgegen, prüft sie und verschickt sie per Mail.
+  Selbst gehostet bei netcup, ohne Cookies, ohne gespeicherte Inhalte – und kostenlos.</p>
+  <div class="buttons"><a class="btn" href="#zugang">Zugang anfragen</a><a class="btn secondary" href="/beispiele/">Live-Beispiele ansehen</a></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <h2>Was der Service kann</h2>
+  <div class="features">
+    <div class="feature"><h3>Formulare als JSON</h3><p>Felder, Pflichtfelder, Längen, Optionen, Labels auf Deutsch und Englisch – an einer Stelle beschrieben.</p></div>
+    <div class="feature"><h3>Eine Zeile Einbindung</h3><p>Ein Skript für Astro, reines HTML oder WordPress. Rendert das Formular oder übernimmt dein eigenes HTML.</p></div>
+    <div class="feature"><h3>Mail mit CC/BCC</h3><p>Zustellung an feste Empfänger, „Antworten“ geht direkt an den Absender, optional eine Danke-Mail.</p></div>
+    <div class="feature"><h3>Spamschutz ohne Rätsel</h3><p>ALTCHA rechnet im Browser eine kleine Aufgabe – kein Bilderrätsel, kein Tracking. Dazu Honeypot, Mindestzeit, Rate-Limit.</p></div>
+    <div class="feature"><h3>Dashboard</h3><p>Einsendungen pro Tag, Spam-Anteil, Fehler – jede Kundin sieht nur ihre eigenen Seiten.</p></div>
+    <div class="feature"><h3>Open Source</h3><p>Reines PHP unter MIT-Lizenz. Läuft auf einfachem Webspace, ohne Container oder Queue.</p></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap two">
+  <div>
+    <h2>Datenschutz als Voreinstellung</h2>
+    <ul>
+      <li><b>Keine Drittanbieter:</b> kein reCAPTCHA, keine fremden Skripte, keine CDN.</li>
+      <li><b>Keine Cookies</b> auf der Website deiner Kundinnen und Kunden.</li>
+      <li><b>Keine gespeicherten Inhalte:</b> Einsendungen werden zugestellt, nie abgelegt.</li>
+      <li><b>Nur Metadaten im Log</b> (Zeit, Status, täglich wechselnder IP-Hash), 90 Tage.</li>
+      <li><b>Nur an Adressen des Kunden:</b> kein Wert aus dem Browser bestimmt, wohin eine Mail geht.</li>
+    </ul>
+    <p><a href="/docs/datenschutz/">Was genau gespeichert wird →</a></p>
+  </div>
+  <div>
+    <h2>So sieht die Einbindung aus</h2>
+    <pre><code>&lt;div class=&quot;mf-slot&quot; data-machma-form=&quot;beispielhotel/kontakt&quot; data-locale=&quot;de&quot;&gt;&lt;/div&gt;
+&lt;noscript&gt;Bitte JavaScript aktivieren oder anrufen: +43 …&lt;/noscript&gt;
+&lt;script src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;
+
+&lt;style&gt;
+  .mf-slot { min-height: 640px; }   /* Höhe an das Formular anpassen */
+&lt;/style&gt;</code></pre>
+  </div>
+</div></section>
+
+<section class="block" id="zugang"><div class="wrap two">
+  <div>
+    <h2>Zugang anfragen</h2>
+    <p>machma forms ist vorerst kostenlos. Es gibt keine Selbstregistrierung: jede neue Seite tragen wir von Hand ein.
+    Schreib uns, für welche Website und welche Formulare du den Service nutzen möchtest – wir melden uns mit den nächsten Schritten.</p>
+    <p class="note">Dieses Formular läuft selbst über machma forms.</p>
+  </div>
+  <div class="demo-box">
+    <div class="mf-slot small" data-machma-form="machma/zugang" data-locale="de"></div>
+    <noscript>Bitte JavaScript aktivieren oder an torben@machma.app schreiben.</noscript>
+  </div>
+</div></section>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

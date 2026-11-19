@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Rückruf – Beispiele – machma forms</title>
+<meta name="description" content="Live-Beispiel Rückruf für machma forms mit JSON und Einbindungs-Snippet.">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/v1/embed.js?v=1" defer data-styles="off"></script><script src="/assets/site.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/" aria-current="page">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+
+<main class="wrap page">
+<p><a href="/beispiele/">← Alle Beispiele</a></p>
+<h1>Rückruf</h1>
+<p class="lead">Kurz und knapp: Name, Telefon, Wunschzeit – mit verstecktem Feld.</p>
+<div class="example">
+  <div>
+    <div class="demo-box">
+      <div class="mf-slot small" data-machma-form="demo/rueckruf" data-locale="de"></div>
+      <noscript>Bitte JavaScript aktivieren.</noscript>
+    </div>
+    <div class="preview" id="preview" hidden>
+      <h2>Das wäre gesendet worden</h2>
+      <h3>Mail an den Empfänger</h3>
+      <pre id="preview-mail"></pre>
+      <h3>Danke-Mail an den Absender</h3>
+      <pre id="preview-auto"></pre>
+      <p><button class="btn" id="again" type="button">Nochmal ausprobieren</button></p>
+    </div>
+  </div>
+  <div>
+    <h2>Einbindung</h2>
+    <pre><code>&lt;div class=&quot;mf-slot&quot; data-machma-form=&quot;demo/rueckruf&quot; data-locale=&quot;de&quot;&gt;&lt;/div&gt;
+&lt;noscript&gt;Bitte JavaScript aktivieren.&lt;/noscript&gt;
+&lt;script src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;</code></pre>
+    <h2>Formular-JSON</h2>
+    <p><code>forms/demo/rueckruf.json</code> im Config-Repo:</p>
+    <pre><code>{
+  &quot;$schema&quot;: &quot;../../schema/form.schema.json&quot;,
+  &quot;id&quot;: &quot;rueckruf&quot;,
+  &quot;version&quot;: 1,
+  &quot;recipient&quot;: &quot;demo&quot;,
+  &quot;submitLabel&quot;: { &quot;de&quot;: &quot;Rückruf anfordern&quot;, &quot;en&quot;: &quot;Request a call&quot; },
+  &quot;successMessage&quot;: { &quot;de&quot;: &quot;Danke! Wir rufen Sie zurück. (Demo – es wurde nichts verschickt.)&quot;, &quot;en&quot;: &quot;Thanks! We will call you back. (Demo – nothing was sent.)&quot; },
+  &quot;fields&quot;: [
+    { &quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;text&quot;, &quot;required&quot;: true, &quot;maxLength&quot;: 100, &quot;autocomplete&quot;: &quot;name&quot;,
+      &quot;label&quot;: { &quot;de&quot;: &quot;Name&quot;, &quot;en&quot;: &quot;Name&quot; } },
+    { &quot;name&quot;: &quot;telefon&quot;, &quot;type&quot;: &quot;tel&quot;, &quot;required&quot;: true, &quot;maxLength&quot;: 40, &quot;autocomplete&quot;: &quot;tel&quot;,
+      &quot;label&quot;: { &quot;de&quot;: &quot;Telefonnummer&quot;, &quot;en&quot;: &quot;Phone number&quot; } },
+    { &quot;name&quot;: &quot;zeit&quot;, &quot;type&quot;: &quot;select&quot;, &quot;required&quot;: true,
+      &quot;options&quot;: [
+        { &quot;value&quot;: &quot;vormittag&quot;, &quot;label&quot;: { &quot;de&quot;: &quot;Vormittag (9–12 Uhr)&quot;, &quot;en&quot;: &quot;Morning (9–12)&quot; } },
+        { &quot;value&quot;: &quot;nachmittag&quot;, &quot;label&quot;: { &quot;de&quot;: &quot;Nachmittag (13–17 Uhr)&quot;, &quot;en&quot;: &quot;Afternoon (1–5 pm)&quot; } } ],
+      &quot;label&quot;: { &quot;de&quot;: &quot;Beste Zeit&quot;, &quot;en&quot;: &quot;Best time&quot; } },
+    { &quot;name&quot;: &quot;quelle&quot;, &quot;type&quot;: &quot;hidden&quot;, &quot;default&quot;: &quot;website&quot; },
+    { &quot;name&quot;: &quot;datenschutz&quot;, &quot;type&quot;: &quot;consent&quot;, &quot;required&quot;: true,
+      &quot;label&quot;: { &quot;de&quot;: &quot;Ich akzeptiere die Datenschutzerklärung&quot;, &quot;en&quot;: &quot;I accept the privacy policy&quot; } }
+  ],
+  &quot;mail&quot;: {
+    &quot;subject&quot;: { &quot;de&quot;: &quot;Rückruf {{zeit}}: {{name}}&quot; },
+    &quot;body&quot;: { &quot;de&quot;: &quot;Bitte {{name}} unter {{telefon}} zurückrufen ({{zeit}}).\n\nGesendet am {{_date}} über {{_site}}/{{_form}}.&quot; }
+  }
+}</code></pre>
+  </div>
+</div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

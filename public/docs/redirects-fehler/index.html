@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Redirects &amp; Fehler – machma forms</title>
+<meta name="description" content="Redirect-Regeln, Fehlercodes und Verhalten ohne JavaScript bei machma forms.">
+<link rel="stylesheet" href="/assets/site.css">
+
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+<div class="wrap docs">
+<nav class="docs-nav" aria-label="Dokumentation"><h4>Erste Schritte</h4><ul><li><a href="/docs/schnellstart/">Schnellstart</a></li></ul><h4>Referenz</h4><ul><li><a href="/docs/formular-json/">Formular-JSON</a></li><li><a href="/docs/einbindung/">Einbindung</a></li><li><a href="/docs/mailversand/">Mailversand</a></li><li><a href="/docs/redirects-fehler/" aria-current="page">Redirects & Fehler</a></li></ul><h4>Recht</h4><ul><li><a href="/docs/datenschutz/">Datenschutz</a></li></ul></nav>
+<article>
+
+<h1>Redirects &amp; Fehler</h1>
+<p class="lead">Was nach dem Absenden passiert – im Erfolgs- und im Fehlerfall.</p>
+
+<h2>Redirect-Ziel</h2>
+<ol>
+<li><b>Standard:</b> <code>redirect</code> aus der Formular-JSON in der Sprache der Einsendung.</li>
+<li><b>Pro Einbindung überschreiben:</b> <code>data-redirect-url="/danke-zimmer"</code> – das Skript schickt das Ziel als Feld <code>_redirect</code> mit.</li>
+<li>Der Server akzeptiert ein überschriebenes Ziel nur, wenn es ein <b>relativer Pfad</b> ist (<code>/danke</code>, nicht <code>//…</code>) oder <b>exakt auf eine der Domains der Seite</b> zeigt.
+Sonst nimmt er still den Standard. So entsteht kein offenes Redirect für Phishing-Links.</li>
+<li>Das Ziel kommt in der Antwort zurück, das Skript leitet dorthin weiter. Ohne Ziel zeigt es die Erfolgsmeldung am Ort.</li>
+</ol>
+<pre><code>{ &quot;ok&quot;: true, &quot;redirect&quot;: &quot;/danke&quot; }</code></pre>
+
+<h2>Fehler</h2>
+<p>Fehler zeigt das Embed-Skript immer direkt am Formular an, mit den Texten aus der Antwort in der Sprache der Seite.</p>
+<pre><code>{ &quot;ok&quot;: false, &quot;error&quot;: &quot;validation&quot;,
+  &quot;message&quot;: &quot;Bitte die markierten Felder prüfen.&quot;,
+  &quot;fields&quot;: { &quot;email&quot;: &quot;Bitte eine gültige E-Mail-Adresse angeben.&quot; } }</code></pre>
+
+<h2>Statuscodes</h2>
+<div class="table"><table>
+<thead><tr><th>Status</th><th>error</th><th>Bedeutung</th></tr></thead>
+<tbody>
+<tr><td>200</td><td>–</td><td>Angenommen. Auch Spam (Honeypot, zu schnell) bekommt still 200, wird aber nicht versendet.</td></tr>
+<tr><td>400</td><td><code>challenge_invalid</code></td><td>Spamschutz fehlt, ist abgelaufen oder wurde schon benutzt – Seite neu laden.</td></tr>
+<tr><td>403</td><td><code>forbidden</code></td><td>Die Website (Origin) ist für diese Seite nicht freigegeben.</td></tr>
+<tr><td>404</td><td><code>not_found</code></td><td>Seite oder Formular gibt es nicht.</td></tr>
+<tr><td>413</td><td><code>too_large</code></td><td>Mehr als 32 KB.</td></tr>
+<tr><td>415</td><td><code>unsupported</code></td><td>Kein <code>application/json</code>.</td></tr>
+<tr><td>422</td><td><code>validation</code></td><td>Felder ungültig, Details pro Feld in <code>fields</code>.</td></tr>
+<tr><td>429</td><td><code>rate_limited</code></td><td>Zu viele Einsendungen von dieser IP, Wartezeit im Header <code>Retry-After</code>.</td></tr>
+<tr><td>502</td><td><code>send_failed</code></td><td>Die Mail konnte nicht zugestellt werden (SMTP).</td></tr>
+</tbody></table></div>
+
+<h2>Ohne JavaScript</h2>
+<p>Ohne JavaScript läuft kein Spamschutz, deshalb wird nie versendet. Einen klassischen Form-POST mit Server-Redirect gibt es bewusst nicht –
+zeige stattdessen per <code>&lt;noscript&gt;</code> Telefon oder Mailadresse.</p>
+
+</article>
+</div>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

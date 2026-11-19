@@ -1,0 +1,26 @@
+{
+  "name": "machma/forms-service",
+  "description": "Formular-Backend für statische Websites. Selbst gehostet, DSGVO-freundlich, ohne Drittanbieter.",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2",
+    "ext-pdo_sqlite": "*",
+    "ext-json": "*",
+    "nikic/fast-route": "^1.3",
+    "phpmailer/phpmailer": "^6.9",
+    "opis/json-schema": "^2.3",
+    "altcha-org/altcha": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0",
+    "symfony/yaml": "^7.0"
+  },
+  "autoload": { "psr-4": { "Machma\\Forms\\": "src/" } },
+  "autoload-dev": { "psr-4": { "Machma\\Forms\\Tests\\": "tests/" } },
+  "scripts": {
+    "dev": "php bin/compile-config.php ../forms-config",
+    "test": "phpunit"
+  },
+  "config": { "sort-packages": true, "platform": { "php": "8.2.0" } }
+}

@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    volumes:
+      - ".:/var/www/html"
+      - "../forms-config:/var/www/forms-config"
+    ports: ["8080:80"]
+    depends_on: [mailpit]
+  mailpit:
+    image: axllent/mailpit
+    ports: ["8025:8025"]   # Test-Postfach im Browser

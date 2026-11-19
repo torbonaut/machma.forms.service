@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Schnellstart – machma forms</title>
+<meta name="description" content="In fünf Schritten vom Formular zur ersten Einsendung mit machma forms.">
+<link rel="stylesheet" href="/assets/site.css">
+
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/" aria-current="page">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+<div class="wrap docs">
+<nav class="docs-nav" aria-label="Dokumentation"><h4>Erste Schritte</h4><ul><li><a href="/docs/schnellstart/" aria-current="page">Schnellstart</a></li></ul><h4>Referenz</h4><ul><li><a href="/docs/formular-json/">Formular-JSON</a></li><li><a href="/docs/einbindung/">Einbindung</a></li><li><a href="/docs/mailversand/">Mailversand</a></li><li><a href="/docs/redirects-fehler/">Redirects & Fehler</a></li></ul><h4>Recht</h4><ul><li><a href="/docs/datenschutz/">Datenschutz</a></li></ul></nav>
+<article>
+
+<h1>Schnellstart</h1>
+<p class="lead">In fünf Schritten vom Formular zur ersten Einsendung.</p>
+<ol class="steps">
+<li><h3>Zugang anfragen</h3>
+<p>Über das Formular auf der <a href="/#zugang">Startseite</a>. Wir legen deine Seite an: Domain(s), Absendername und die Empfängeradressen.</p></li>
+<li><h3>Formular beschreiben</h3>
+<p>Ein Formular ist eine JSON-Datei mit Feldern, Labels und optional einem Mail-Template. Am schnellsten schickst du uns
+den Link auf dein bestehendes Formular – unser KI-Skill erzeugt daraus eine geprüfte Formular-JSON. Alle Optionen: <a href="/docs/formular-json/">Formular-JSON</a>.</p>
+<pre><code>{
+  &quot;id&quot;: &quot;kontakt&quot;,
+  &quot;version&quot;: 1,
+  &quot;recipient&quot;: &quot;rezeption&quot;,
+  &quot;fields&quot;: [
+    { &quot;name&quot;: &quot;name&quot;, &quot;type&quot;: &quot;text&quot;, &quot;required&quot;: true, &quot;label&quot;: { &quot;de&quot;: &quot;Name&quot;, &quot;en&quot;: &quot;Name&quot; } },
+    { &quot;name&quot;: &quot;email&quot;, &quot;type&quot;: &quot;email&quot;, &quot;required&quot;: true, &quot;replyTo&quot;: true, &quot;label&quot;: { &quot;de&quot;: &quot;E-Mail&quot;, &quot;en&quot;: &quot;Email&quot; } },
+    { &quot;name&quot;: &quot;nachricht&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: true, &quot;label&quot;: { &quot;de&quot;: &quot;Nachricht&quot;, &quot;en&quot;: &quot;Message&quot; } },
+    { &quot;name&quot;: &quot;datenschutz&quot;, &quot;type&quot;: &quot;consent&quot;, &quot;required&quot;: true,
+      &quot;label&quot;: { &quot;de&quot;: &quot;Ich akzeptiere die Datenschutzerklärung&quot;, &quot;en&quot;: &quot;I accept the privacy policy&quot; } }
+  ]
+}</code></pre></li>
+<li><h3>Einbinden</h3>
+<p>An der Stelle, an der das Formular erscheinen soll:</p>
+<pre><code>&lt;div class=&quot;mf-slot&quot; data-machma-form=&quot;beispielhotel/kontakt&quot; data-locale=&quot;de&quot;&gt;&lt;/div&gt;
+&lt;noscript&gt;Bitte JavaScript aktivieren oder anrufen: +43 …&lt;/noscript&gt;
+&lt;script src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;
+
+&lt;style&gt;
+  .mf-slot { min-height: 640px; }   /* Höhe an das Formular anpassen */
+&lt;/style&gt;</code></pre>
+<p>Hat deine Seite eine Content-Security-Policy, erlaube <code>https://forms.machma.app</code> unter <code>script-src</code> und <code>connect-src</code>.
+Mehr dazu unter <a href="/docs/einbindung/">Einbindung</a>.</p></li>
+<li><h3>Absender freigeben</h3>
+<p>Alle Mails kommen von <code>formulare@machma.app</code>. Die Empfänger nehmen diese Adresse in ihr Adressbuch auf, damit nichts im Spam landet –
+siehe <a href="/docs/mailversand/">Mailversand</a>.</p></li>
+<li><h3>Testen</h3>
+<p>Schick das Formular einmal selbst ab. Im <a href="/admin">Dashboard</a> siehst du jede Einsendung mit Status (versendet, Spam, Fehler) – ohne Inhalte.</p></li>
+</ol>
+
+</article>
+</div>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

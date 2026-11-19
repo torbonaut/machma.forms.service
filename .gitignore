@@ -1,0 +1,7 @@
+/vendor/
+/secrets.php
+/var/*
+!/var/.htaccess
+!/var/.gitkeep
+/config/compiled.php
+/.phpunit.cache/

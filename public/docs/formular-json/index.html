@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Formular-JSON – machma forms</title>
+<meta name="description" content="Referenz aller Felder, Typen und Optionen der Formular-JSON von machma forms.">
+<link rel="stylesheet" href="/assets/site.css">
+
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/" aria-current="page">Doku</a><a href="/beispiele/">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+<div class="wrap docs">
+<nav class="docs-nav" aria-label="Dokumentation"><h4>Erste Schritte</h4><ul><li><a href="/docs/schnellstart/">Schnellstart</a></li></ul><h4>Referenz</h4><ul><li><a href="/docs/formular-json/" aria-current="page">Formular-JSON</a></li><li><a href="/docs/einbindung/">Einbindung</a></li><li><a href="/docs/mailversand/">Mailversand</a></li><li><a href="/docs/redirects-fehler/">Redirects & Fehler</a></li></ul><h4>Recht</h4><ul><li><a href="/docs/datenschutz/">Datenschutz</a></li></ul></nav>
+<article>
+
+<h1>Formular-JSON</h1>
+<p class="lead">Eine Datei pro Formular beschreibt Felder, Validierung, Beschriftungen und Mail-Templates.
+Der Server prüft Einsendungen dagegen, das Embed-Skript rendert daraus das Formular.</p>
+
+<h2>Aufbau</h2>
+<div class="table"><table>
+<thead><tr><th>Schlüssel</th><th>Pflicht</th><th>Bedeutung</th></tr></thead>
+<tbody>
+<tr><td><code>id</code></td><td>ja</td><td>Formular-ID, entspricht dem Dateinamen (<code>kontakt</code> → <code>kontakt.json</code>)</td></tr>
+<tr><td><code>version</code></td><td>ja</td><td>Ganzzahl, bei jeder Änderung erhöhen – steht im Dashboard</td></tr>
+<tr><td><code>recipient</code></td><td>ja</td><td>Empfänger-<b>Alias</b> aus der Seiten-Config. Echte Adressen stehen nie in der Formular-JSON.</td></tr>
+<tr><td><code>fields</code></td><td>ja</td><td>Liste der Felder, in Anzeigereihenfolge</td></tr>
+<tr><td><code>redirect</code></td><td>nein</td><td>Danke-Seite pro Sprache, z. B. <code>{"de": "/danke", "en": "/en/thank-you"}</code></td></tr>
+<tr><td><code>submitLabel</code></td><td>nein</td><td>Beschriftung des Absende-Buttons pro Sprache</td></tr>
+<tr><td><code>successMessage</code></td><td>nein</td><td>Erfolgsmeldung am Ort, wenn es keinen Redirect gibt</td></tr>
+<tr><td><code>mail</code></td><td>nein</td><td><code>subject</code> und <code>body</code> der Mail an den Empfänger, mit Platzhaltern</td></tr>
+<tr><td><code>autoresponder</code></td><td>nein</td><td>Danke-Mail an den Absender: <code>enabled</code>, <code>subject</code>, <code>body</code> – nur fester Text</td></tr>
+</tbody></table></div>
+
+<h2>Feldtypen</h2>
+<div class="table"><table>
+<thead><tr><th>type</th><th>Bedeutung</th><th>Optionen</th></tr></thead>
+<tbody><tr><td><code>text</code></td><td>Einzeiliger Text</td><td>maxLength (Standard 500), minLength, placeholder, autocomplete</td></tr><tr><td><code>email</code></td><td>E-Mail-Adresse, wird streng geprüft</td><td>replyTo: true für das Absenderfeld (höchstens eines)</td></tr><tr><td><code>tel</code></td><td>Telefonnummer (Ziffern, Leerzeichen, + ( ) / . -)</td><td>maxLength (max. 40)</td></tr><tr><td><code>textarea</code></td><td>Mehrzeiliger Text</td><td>maxLength (Standard 5000), rows</td></tr><tr><td><code>number</code></td><td>Zahl</td><td>min, max, step</td></tr><tr><td><code>date</code></td><td>Datum im Format JJJJ-MM-TT</td><td>–</td></tr><tr><td><code>select</code></td><td>Auswahlliste</td><td>options (Pflicht)</td></tr><tr><td><code>radio</code></td><td>Eine Option aus mehreren</td><td>options (Pflicht)</td></tr><tr><td><code>checkbox</code></td><td>Mit options: Mehrfachauswahl. Ohne: einzelnes Ja/Nein</td><td>options (optional)</td></tr><tr><td><code>consent</code></td><td>Zustimmung, z. B. Datenschutz – muss angehakt sein, wenn required</td><td>–</td></tr><tr><td><code>hidden</code></td><td>Verstecktes Feld. Gilt als Benutzereingabe und steuert nichts</td><td>default</td></tr></tbody></table></div>
+<p>Jedes Feld hat <code>name</code> (Buchstaben, Ziffern, Unterstrich; nicht <code>locale</code> oder <code>altcha</code>), <code>type</code>,
+<code>label</code> pro Sprache sowie optional <code>required</code>, <code>help</code>, <code>placeholder</code>, <code>default</code> und <code>autocomplete</code>.
+Optionen haben die Form <code>{"value": "zimmer", "label": {"de": "Zimmeranfrage", "en": "Room request"}}</code>.
+Datei-Uploads (<code>file</code>) kommen in einem späteren Schritt.</p>
+
+<h2>Regeln</h2>
+<ul>
+<li>Jedes Textfeld hat ein <code>maxLength</code> – Standard 500, bei <code>textarea</code> 5000.</li>
+<li>Unbekannte Felder in einer Einsendung werden verworfen.</li>
+<li>Platzhalter <code>{{feld}}</code> dürfen nur auf existierende Felder zeigen, dazu <code>{{_site}}</code>, <code>{{_form}}</code> und <code>{{_date}}</code>. Die CI prüft das vor jedem Deploy.</li>
+<li>Bei Auswahlfeldern setzt der Platzhalter das Label der Option ein, bei Ja/Nein-Feldern „Ja“ oder „Nein“.</li>
+<li>Der <b>Autoresponder enthält nur feste Texte</b>, keine Platzhalter. Sonst könnte jemand Werbung in das Namensfeld schreiben und sie über unsere Domain an fremde Adressen schicken lassen.</li>
+<li>Die Mail an den Empfänger nutzt das Template in der Sprache der Einsendung, sonst <code>de</code>. Der Autoresponder nutzt immer die Sprache der Einsendung.</li>
+<li>Ohne <code>mail</code>-Template erzeugt der Server eine Standard-Mail mit allen Feldern als Liste.</li>
+<li>Labels, Optionen und Reihenfolge bestimmen auch die Darstellung im Embed-Skript.</li>
+</ul>
+
+<h2>Vollständiges Beispiel</h2>
+<pre><code>{
+  &quot;$schema&quot;: &quot;../../schema/form.schema.json&quot;,
+  &quot;id&quot;: &quot;kontakt&quot;,
+  &quot;version&quot;: 1,
+  &quot;recipient&quot;: &quot;demo&quot;,
+  &quot;fields&quot;: [
+    {
+      &quot;name&quot;: &quot;name&quot;,
+      &quot;type&quot;: &quot;text&quot;,
+      &quot;required&quot;: true,
+      &quot;maxLength&quot;: 100,
+      &quot;autocomplete&quot;: &quot;name&quot;,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Name&quot;,
+        &quot;en&quot;: &quot;Name&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;email&quot;,
+      &quot;type&quot;: &quot;email&quot;,
+      &quot;required&quot;: true,
+      &quot;replyTo&quot;: true,
+      &quot;autocomplete&quot;: &quot;email&quot;,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;E-Mail&quot;,
+        &quot;en&quot;: &quot;Email&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;anreise&quot;,
+      &quot;type&quot;: &quot;date&quot;,
+      &quot;required&quot;: false,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Anreise&quot;,
+        &quot;en&quot;: &quot;Arrival&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;personen&quot;,
+      &quot;type&quot;: &quot;number&quot;,
+      &quot;min&quot;: 1,
+      &quot;max&quot;: 12,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Personen&quot;,
+        &quot;en&quot;: &quot;Guests&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;thema&quot;,
+      &quot;type&quot;: &quot;select&quot;,
+      &quot;required&quot;: true,
+      &quot;options&quot;: [
+        {
+          &quot;value&quot;: &quot;zimmer&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Zimmeranfrage&quot;,
+            &quot;en&quot;: &quot;Room request&quot;
+          }
+        },
+        {
+          &quot;value&quot;: &quot;sonstiges&quot;,
+          &quot;label&quot;: {
+            &quot;de&quot;: &quot;Sonstiges&quot;,
+            &quot;en&quot;: &quot;Other&quot;
+          }
+        }
+      ],
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Thema&quot;,
+        &quot;en&quot;: &quot;Topic&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;nachricht&quot;,
+      &quot;type&quot;: &quot;textarea&quot;,
+      &quot;required&quot;: true,
+      &quot;maxLength&quot;: 5000,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Nachricht&quot;,
+        &quot;en&quot;: &quot;Message&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;datenschutz&quot;,
+      &quot;type&quot;: &quot;consent&quot;,
+      &quot;required&quot;: true,
+      &quot;label&quot;: {
+        &quot;de&quot;: &quot;Ich akzeptiere die Datenschutzerklärung&quot;,
+        &quot;en&quot;: &quot;I accept the privacy policy&quot;
+      }
+    }
+  ],
+  &quot;mail&quot;: {
+    &quot;subject&quot;: {
+      &quot;de&quot;: &quot;Neue Anfrage: {{thema}} von {{name}}&quot;
+    },
+    &quot;body&quot;: {
+      &quot;de&quot;: &quot;Name: {{name}}\nE-Mail: {{email}}\nAnreise: {{anreise}}\nPersonen: {{personen}}\n\n{{nachricht}}&quot;
+    }
+  },
+  &quot;autoresponder&quot;: {
+    &quot;enabled&quot;: true,
+    &quot;subject&quot;: {
+      &quot;de&quot;: &quot;Danke für Ihre Anfrage&quot;,
+      &quot;en&quot;: &quot;Thank you for your request&quot;
+    },
+    &quot;body&quot;: {
+      &quot;de&quot;: &quot;Danke für Ihre Nachricht,\nwir melden uns innerhalb von 24 Stunden.&quot;,
+      &quot;en&quot;: &quot;Thank you for your message,\nwe will get back to you within 24 hours.&quot;
+    }
+  },
+  &quot;successMessage&quot;: {
+    &quot;de&quot;: &quot;Danke! (Demo – es wurde nichts verschickt.)&quot;,
+    &quot;en&quot;: &quot;Thanks! (Demo – nothing was sent.)&quot;
+  }
+}</code></pre>
+
+<h2>Öffentliche Ansicht</h2>
+<p><code>GET /v1/{site}/{form}/spec</code> liefert die Datei ohne <code>recipient</code>, <code>mail</code> und <code>autoresponder</code> aus –
+das Embed-Skript braucht nur Felder und Beschriftungen.</p>
+
+</article>
+</div>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

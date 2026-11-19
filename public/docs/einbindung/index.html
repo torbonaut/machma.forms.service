@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Einbindung – machma forms</title>
+<meta name="description" content="Embed-Modi, data-Attribute, Astro, CSP und Styling für machma forms.">
+<link rel="stylesheet" href="/assets/site.css">
+
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+<div class="wrap docs">
+<nav class="docs-nav" aria-label="Dokumentation"><h4>Erste Schritte</h4><ul><li><a href="/docs/schnellstart/">Schnellstart</a></li></ul><h4>Referenz</h4><ul><li><a href="/docs/formular-json/">Formular-JSON</a></li><li><a href="/docs/einbindung/" aria-current="page">Einbindung</a></li><li><a href="/docs/mailversand/">Mailversand</a></li><li><a href="/docs/redirects-fehler/">Redirects & Fehler</a></li></ul><h4>Recht</h4><ul><li><a href="/docs/datenschutz/">Datenschutz</a></li></ul></nav>
+<article>
+
+<h1>Einbindung</h1>
+<p class="lead">Jede Website bindet Formulare über ein Skript ein – egal ob Astro, reines HTML oder WordPress.</p>
+
+<h2>Modus 1: Formular rendern lassen</h2>
+<p>Das Skript lädt die Formular-JSON und baut daraus Felder, Labels und Optionen in der gewünschten Sprache – mit HTML-Validierung
+(<code>required</code>, <code>maxlength</code>, <code>type="email"</code>, <code>min</code>/<code>max</code>).</p>
+<pre><code>&lt;div class=&quot;mf-slot&quot; data-machma-form=&quot;beispielhotel/kontakt&quot; data-locale=&quot;de&quot;&gt;&lt;/div&gt;
+&lt;noscript&gt;Bitte JavaScript aktivieren oder anrufen: +43 …&lt;/noscript&gt;
+&lt;script src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;
+
+&lt;style&gt;
+  .mf-slot { min-height: 640px; }   /* Höhe an das Formular anpassen */
+&lt;/style&gt;</code></pre>
+
+<h2>Modus 2: eigenes HTML übernehmen</h2>
+<p>Volle Kontrolle über Markup und Design: das Skript übernimmt ein vorhandenes <code>&lt;form&gt;</code>. Die <code>name</code>-Attribute müssen
+denen der Formular-JSON entsprechen. Einzelne Checkboxen ohne <code>value</code>-Attribut werden als Ja/Nein gesendet, Gruppen mit gleichem Namen als Liste.</p>
+<pre><code>&lt;form data-machma-form=&quot;beispielhotel/kontakt&quot; data-redirect-url=&quot;/danke-zimmer&quot;&gt;
+  &lt;label&gt;Name &lt;input name=&quot;name&quot; required maxlength=&quot;100&quot;&gt;&lt;/label&gt;
+  &lt;label&gt;E-Mail &lt;input name=&quot;email&quot; type=&quot;email&quot; required&gt;&lt;/label&gt;
+  &lt;label&gt;Nachricht &lt;textarea name=&quot;nachricht&quot; required maxlength=&quot;5000&quot;&gt;&lt;/textarea&gt;&lt;/label&gt;
+  &lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;datenschutz&quot; required&gt; Ich akzeptiere die Datenschutzerklärung&lt;/label&gt;
+  &lt;button type=&quot;submit&quot;&gt;Absenden&lt;/button&gt;
+&lt;/form&gt;
+&lt;script src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;</code></pre>
+
+<h2>data-Attribute</h2>
+<div class="table"><table>
+<thead><tr><th>Attribut</th><th>Bedeutung</th></tr></thead>
+<tbody>
+<tr><td><code>data-machma-form</code></td><td><code>site/form</code> – Pflicht</td></tr>
+<tr><td><code>data-locale</code></td><td>Sprache (<code>de</code>, <code>en</code>). Standard: <code>lang</code> des <code>&lt;html&gt;</code>-Elements</td></tr>
+<tr><td><code>data-redirect-url</code></td><td>überschreibt das Redirect-Ziel für diese Einbindung – nur relative Pfade oder eigene Domains (<a href="/docs/redirects-fehler/">Regeln</a>)</td></tr>
+<tr><td><code>data-success-message</code></td><td>eigene Erfolgsmeldung, wenn es keinen Redirect gibt</td></tr>
+<tr><td><code>data-no-redirect</code></td><td>nie weiterleiten, immer die Erfolgsmeldung zeigen</td></tr>
+<tr><td><code>data-endpoint</code></td><td>andere Service-URL (z. B. lokal <code>http://localhost:8080</code>)</td></tr>
+</tbody></table></div>
+<p>Am <code>&lt;script&gt;</code>-Tag schaltet <code>data-styles="off"</code> die eingebauten Standard-Styles ab.</p>
+
+<h2>Kein Layout-Sprung</h2>
+<p>Der Platzhalter bekommt eine <code>min-height</code> in der ungefähren Höhe des fertigen Formulars. Sonst rutscht der Inhalt darunter beim Laden nach unten,
+und die Core Web Vitals (CLS) leiden.</p>
+
+<h2>Astro</h2>
+<p>Im Moment genauso wie jede andere Seite. Überschrift, Text und Kontaktdaten bleiben normales statisches HTML; nur das Formular entsteht per JS.
+Für SEO ist das unkritisch – Formularfelder ranken nicht. Mit View Transitions initialisiert sich das Skript bei <code>astro:page-load</code> von selbst.</p>
+<pre><code>&lt;!-- src/components/KontaktFormular.astro --&gt;
+&lt;div class=&quot;mf-slot&quot; data-machma-form=&quot;beispielhotel/kontakt&quot; data-locale=&quot;de&quot;&gt;&lt;/div&gt;
+&lt;noscript&gt;Bitte JavaScript aktivieren oder anrufen: +43 …&lt;/noscript&gt;
+&lt;script is:inline src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;
+
+&lt;style&gt;
+  .mf-slot { min-height: 640px; }   /* Höhe an das Formular anpassen */
+&lt;/style&gt;</code></pre>
+<p>Ein Astro-Wrapper als npm-Paket (<code>@machma/forms-astro</code>), der das HTML schon beim Build rendert, ist geplant.</p>
+
+<h2>Content-Security-Policy</h2>
+<p>Hat die Seite eine CSP, muss sie <code>https://forms.machma.app</code> unter <code>script-src</code> und <code>connect-src</code> erlauben:</p>
+<pre><code>Content-Security-Policy: script-src &#x27;self&#x27; https://forms.machma.app; connect-src &#x27;self&#x27; https://forms.machma.app</code></pre>
+<p>Die Standard-Styles werden als <code>&lt;style&gt;</code>-Element eingefügt. Erlaubt deine CSP das nicht (<code>style-src</code> ohne <code>'unsafe-inline'</code>),
+setze <code>data-styles="off"</code> und style die Klassen selbst – das Formular funktioniert in jedem Fall.</p>
+
+<h2>Styling</h2>
+<p>Kein Shadow DOM: alles lässt sich mit normalem CSS gestalten. Die wichtigsten Klassen und Custom Properties:</p>
+<pre><code>:root {
+  --mf-accent: #1f5f4a;      /* Button, Fokus */
+  --mf-accent-ink: #fff;
+  --mf-error: #b3261e;
+  --mf-border: #c9c8c2;
+  --mf-radius: 6px;
+  --mf-gap: 1rem;
+}
+.mf-form     { }  /* das Formular */
+.mf-field    { }  /* ein Feld: Label, Eingabe, Hilfe, Fehler (+ .mf-field--email usw.) */
+.mf-label    { }
+.mf-input    { }  /* input, select, textarea */
+.mf-option   { }  /* Radio/Checkbox mit Text */
+.mf-help     { }
+.mf-error    { }  /* Fehlermeldung pro Feld */
+.mf-invalid  { }  /* ungültige Eingabe */
+.mf-submit   { }
+.mf-status   { }  /* „Wird gesendet …“, Fehler (+ .mf-status--error) */
+.mf-altcha   { }  /* Hinweis zum Spamschutz */
+.mf-success  { }  /* Erfolgsmeldung */</code></pre>
+<p>Der Container bekommt die Zustandsklassen <code>mf-loading</code>, <code>mf-ready</code>, <code>mf-sending</code> und <code>mf-sent</code>.
+Zusätzlich feuert er die Events <code>machma:success</code> und <code>machma:error</code> mit der Server-Antwort in <code>event.detail</code>.</p>
+
+<h2>Was das Skript sonst tut</h2>
+<ul>
+<li>Ergänzt ein unsichtbares Honeypot-Feld, die Sprache und den ALTCHA-Spamschutz.</li>
+<li>Holt die Spamschutz-Aufgabe erst, wenn jemand ins Formular klickt, und rechnet sie im Hintergrund (unter einer Sekunde).</li>
+<li>Sendet per <code>fetch</code> als JSON, zeigt Fehler pro Feld und eine Erfolgsmeldung – oder leitet zur Danke-Seite weiter.</li>
+<li>Kein Framework, keine Cookies, keine Drittanbieter. Texte nur per <code>textContent</code>, nie <code>innerHTML</code>.</li>
+<li>Versioniert über <code>?v=1</code>: neue Versionen brechen keine bestehenden Einbindungen.</li>
+</ul>
+
+<h2>Ohne JavaScript</h2>
+<p>Der Spamschutz braucht JavaScript, deshalb wird ohne JS nie versendet. Zeige per <code>&lt;noscript&gt;</code> eine Telefonnummer oder Mailadresse an.</p>
+
+</article>
+</div>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>
