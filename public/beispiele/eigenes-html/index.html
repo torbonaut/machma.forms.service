@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<title>Eigenes HTML – Beispiele – machma forms</title>
+<meta name="description" content="Live-Beispiel für machma forms: ein vorhandenes Formular mit eigenem HTML und Design bekommt nur den Versand.">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/v1/embed.js?v=1" defer data-styles="off"></script><script src="/assets/site.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="logo" href="/">machma <b>forms</b></a>
+  <nav class="site-nav" aria-label="Hauptnavigation"><a href="/docs/schnellstart/">Schnellstart</a><a href="/docs/formular-json/">Doku</a><a href="/beispiele/" aria-current="page">Beispiele</a><a href="/#zugang" class="cta">Zugang anfragen</a></nav>
+</div></header>
+
+<main class="wrap page">
+<p><a href="/beispiele/">← Alle Beispiele</a></p>
+<h1>Eigenes HTML</h1>
+<p class="lead">Das Formular gibt es schon – mit eigenen Texten, eigenem Layout und eigenem Design. machma forms übernimmt nur Spamschutz, Prüfung und Versand.</p>
+<div class="example">
+  <div>
+    <div class="demo-box">
+<form class="own-form" data-machma-form="demo/kontakt" data-locale="de"
+      data-success-message="Danke! (Demo – es wurde nichts verschickt.)">
+  <div class="own-row">
+    <label>Wie heißen Sie? <input name="name" autocomplete="name"></label>
+    <label>Ihre E-Mail-Adresse <input name="email" type="email" autocomplete="email"></label>
+  </div>
+  <div class="own-row">
+    <label>Anreise (optional) <input name="anreise" type="date"></label>
+    <label>Personen <input name="personen" type="number" min="1" max="12"></label>
+  </div>
+  <label>Worum geht es?
+    <select name="thema">
+      <option value="">Bitte auswählen</option>
+      <option value="zimmer">Ich möchte ein Zimmer anfragen</option>
+      <option value="sonstiges">Etwas anderes</option>
+    </select>
+  </label>
+  <label>Ihre Nachricht <textarea name="nachricht" rows="5"></textarea></label>
+  <label class="own-check"><input type="checkbox" name="datenschutz"> Ich habe die Datenschutzerklärung gelesen.</label>
+  <button type="submit" class="own-button">Anfrage senden →</button>
+</form>
+      <noscript>Bitte JavaScript aktivieren.</noscript>
+    </div>
+    <div class="preview" id="preview" hidden>
+      <h2>Das wäre gesendet worden</h2>
+      <h3>Mail an den Empfänger</h3>
+      <pre id="preview-mail"></pre>
+      <h3>Danke-Mail an den Absender</h3>
+      <pre id="preview-auto"></pre>
+      <p><button class="btn" id="again" type="button">Nochmal ausprobieren</button></p>
+    </div>
+  </div>
+  <div>
+    <h2>So funktioniert’s</h2>
+    <ul>
+      <li>Das <code>&lt;form&gt;</code> bekommt nur <code>data-machma-form="seite/formular"</code>.</li>
+      <li>Die <code>name</code>-Attribute müssen zu den Feldnamen in der Formular-JSON passen. Texte, Reihenfolge, Layout und CSS sind frei.</li>
+      <li>Geprüft wird immer auf dem Server nach der JSON: Probier, ohne Angaben abzuschicken – die Fehler erscheinen unter dem jeweiligen Feld.</li>
+      <li>Honeypot und ALTCHA fügt das Skript selbst unsichtbar hinzu. Kein <code>action</code>, keine Empfängeradresse im HTML.</li>
+      <li>Mit <code>data-redirect-url="/danke"</code> geht es nach dem Senden auf eine eigene Danke-Seite.</li>
+    </ul>
+    <h2>Einbindung</h2>
+    <pre><code>&lt;form class=&quot;own-form&quot; data-machma-form=&quot;demo/kontakt&quot; data-locale=&quot;de&quot;
+      data-success-message=&quot;Danke! (Demo – es wurde nichts verschickt.)&quot;&gt;
+  &lt;div class=&quot;own-row&quot;&gt;
+    &lt;label&gt;Wie heißen Sie? &lt;input name=&quot;name&quot; autocomplete=&quot;name&quot;&gt;&lt;/label&gt;
+    &lt;label&gt;Ihre E-Mail-Adresse &lt;input name=&quot;email&quot; type=&quot;email&quot; autocomplete=&quot;email&quot;&gt;&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;own-row&quot;&gt;
+    &lt;label&gt;Anreise (optional) &lt;input name=&quot;anreise&quot; type=&quot;date&quot;&gt;&lt;/label&gt;
+    &lt;label&gt;Personen &lt;input name=&quot;personen&quot; type=&quot;number&quot; min=&quot;1&quot; max=&quot;12&quot;&gt;&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;label&gt;Worum geht es?
+    &lt;select name=&quot;thema&quot;&gt;
+      &lt;option value=&quot;&quot;&gt;Bitte auswählen&lt;/option&gt;
+      &lt;option value=&quot;zimmer&quot;&gt;Ich möchte ein Zimmer anfragen&lt;/option&gt;
+      &lt;option value=&quot;sonstiges&quot;&gt;Etwas anderes&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/label&gt;
+  &lt;label&gt;Ihre Nachricht &lt;textarea name=&quot;nachricht&quot; rows=&quot;5&quot;&gt;&lt;/textarea&gt;&lt;/label&gt;
+  &lt;label class=&quot;own-check&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;datenschutz&quot;&gt; Ich habe die Datenschutzerklärung gelesen.&lt;/label&gt;
+  &lt;button type=&quot;submit&quot; class=&quot;own-button&quot;&gt;Anfrage senden →&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;script src=&quot;https://forms.machma.app/v1/embed.js?v=1&quot; defer&gt;&lt;/script&gt;</code></pre>
+    <p>Dieselbe Formular-JSON wie im <a href="/beispiele/kontakt/">Kontakt-Beispiel</a>, dort automatisch gerendert.</p>
+  </div>
+</div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <span>© 2026 machma.app · MIT-Lizenz · kostenlos</span>
+  <span><a href="/docs/datenschutz/">Datenschutz</a> · <a href="/admin">Dashboard</a> · Sicherheit: security@machma.app</span>
+</div></footer>
+</body>
+</html>

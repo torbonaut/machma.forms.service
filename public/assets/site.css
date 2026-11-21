@@ -109,3 +109,21 @@ ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0
 .site-footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 .site-footer a { color: var(--muted); }
 .page { padding-block: 40px 80px; }
+
+/* Beispiel „Eigenes HTML“: bewusst eigenes Design, nicht die .mf-*-Klassen */
+.own-form { display: grid; gap: 18px; }
+.own-form label { display: grid; gap: 6px; font-size: 15px; color: var(--muted); }
+.own-form input:not([type=checkbox]), .own-form select, .own-form textarea {
+  font: inherit; color: var(--text); background: transparent; width: 100%;
+  padding: 8px 2px; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; }
+.own-form input:focus-visible, .own-form select:focus-visible, .own-form textarea:focus-visible { outline: none; border-bottom-color: var(--accent); }
+.own-form textarea { resize: vertical; }
+.own-form :is(input, select, textarea).mf-invalid { border-bottom-color: var(--error); }
+.own-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 520px) { .own-row { grid-template-columns: minmax(0, 1fr); } }
+.own-form .own-check { display: flex; gap: 10px; align-items: flex-start; color: var(--text); }
+.own-check input { margin-top: .35em; accent-color: var(--accent); }
+.own-button { font: inherit; font-weight: 600; justify-self: start; padding: 12px 26px; border: 2px solid var(--accent);
+  border-radius: 999px; background: transparent; color: var(--accent); cursor: pointer; }
+.own-button:hover { background: var(--accent); color: var(--accent-ink); }
+.own-button[disabled] { opacity: .6; cursor: progress; }
