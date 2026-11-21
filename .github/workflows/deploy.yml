@@ -1,4 +1,5 @@
 # Service-Repo: Tests (PHPStan, PHPUnit) + E2E (Playwright gegen Apache/PHP 8.2/Mailpit) → Deploy.
+# Deploy per tar über SSH (.github/deploy/install.sh) – auf dem Server ist kein rsync nötig.
 # Deployt wird nur von main und nur, wenn beide Test-Jobs grün sind.
 # secrets.php und var/ werden nie überschrieben.
 #
@@ -138,19 +139,25 @@ jobs:
           else
             ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" "${{ secrets.SSH_HOST }}" > ~/.ssh/known_hosts
           fi
-      - name: Code und public/ hochladen
+      - name: Release packen (nur diese Dateien kommen auf den Server)
         run: |
-          rsync -az --delete \
-            --exclude '/.git' --exclude '/.github' --exclude '/tests' --exclude '/build' --exclude '/forms-config' \
-            --exclude '/docs' --exclude '/secrets.php' --exclude '/var/' --exclude '/config/compiled.php' \
-            --exclude '/.phpunit.cache' --exclude '/phpunit.xml' --exclude '/phpstan.neon' \
-            --exclude '/compose.yaml' --exclude '/compose.e2e.yaml' --exclude '/Dockerfile' \
-            -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }}" \
-            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+          tar -cf "$RUNNER_TEMP/release.tar" \
+            .htaccess LICENSE README.md composer.json composer.lock secrets.example.php \
+            bin public src templates vendor
+          tar -tf "$RUNNER_TEMP/release.tar" | grep -E '(^|/)(secrets\.php|compiled\.php|.*\.sqlite)$' && exit 1 || true
+      - name: Hochladen und installieren (tar über SSH, kein rsync nötig)
+        env:
+          SSH: ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          $SSH "cat > '$DEPLOY_PATH/.release.tar'" < "$RUNNER_TEMP/release.tar"
+          $SSH "sh -s -- '$DEPLOY_PATH'" < .github/deploy/install.sh
       - name: Config hochladen
+        env:
+          SSH: ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          rsync -az -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || 22 }}" \
-            build/compiled.php "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/config/compiled.php"
+          $SSH "cat > '$DEPLOY_PATH/config/compiled.php.new' && mv '$DEPLOY_PATH/config/compiled.php.new' '$DEPLOY_PATH/config/compiled.php'" < build/compiled.php
       - name: Smoke-Test nach dem Deploy
         if: vars.PUBLIC_URL != ''
         run: |

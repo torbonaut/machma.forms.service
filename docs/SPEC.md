@@ -47,7 +47,7 @@ forms-service/
 
 Nur `public/` ist über das Web erreichbar; eine `.htaccess` sperrt zusätzlich alle anderen Ordner.
 
-**Deploy:** zwei Repos, je eine GitHub Action, beide per rsync über SSH.
+**Deploy:** zwei Repos, je eine GitHub Action, beide per SSH (tar-Upload; rsync ist auf dem Webspace nicht verfügbar).
 - Service-Repo (Push auf `main`): PHPUnit, `composer install --no-dev --optimize-autoloader`, Code und `public/` hochladen, danach Config neu bauen.
 - Config-Repo (Push auf `main`): Formular-JSONs gegen das Meta-Schema prüfen, zu `config/compiled.php` kompilieren, nur diese Datei hochladen.
 

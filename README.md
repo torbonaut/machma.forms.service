@@ -158,7 +158,8 @@ GitHub Action `.github/workflows/deploy.yml` bei jedem Push und Pull Request:
 1. **test:** PHPStan, PHPUnit (mit dem Config-Repo ausgecheckt), Produktions-Config prüfen
 2. **e2e:** Docker-Stack (Apache, PHP 8.2, Mailpit) starten und Playwright laufen lassen; bei Fehlern Report und Server-Logs als Artefakt
 3. **deploy** (nur `main`, nur wenn beide grün): Config mit `--production` kompilieren, `composer install --no-dev --optimize-autoloader`,
-   Code und `public/` per rsync über SSH hochladen, danach `config/compiled.php`; optional Smoke-Test gegen die Variable `PUBLIC_URL`
+   Release als tar über SSH hochladen und mit `.github/deploy/install.sh` ordnerweise austauschen (auf dem Server ist kein
+   rsync nötig, nur `sh`, `tar`, `mv`), danach `config/compiled.php` atomar ersetzen; optional Smoke-Test gegen die Variable `PUBLIC_URL`
 
 Benötigte Secrets: `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `DEPLOY_PATH` (optional `SSH_PORT`, `SSH_KNOWN_HOSTS`,
 `CONFIG_REPO_TOKEN` – nötig, weil das Config-Repo privat ist: fine-grained Token mit Lesezugriff auf dessen Inhalt).
